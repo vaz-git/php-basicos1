@@ -1,8 +1,6 @@
 <!-- Passar id via URL -->
-<!-- http://localhost/php-basicos/13_exclusao.php?id=5-->
+<!-- http://localhost/php-basicos1/13_exclusao.php?id=1-->
 
-
-<!-- http://localhost/php-basicos/12_atualizar.php 
 <?php
 // Conecta ao banco de dados
 $servername = "localhost";
@@ -17,58 +15,23 @@ if ($conn->connect_error) {
     die("Falha na conexão: " . $conn->connect_error);
 }
 
-// Inicializa a variável $cliente como null
-$cliente = null;
-
-// Verifica se um ID foi passado via URL para edição
+// Verifica se o id foi passado via URL (id a ser excluído)
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $sql = "SELECT * FROM clientes WHERE id='$id'";
-    $result = $conn->query($sql);
 
-    // Verifica se encontrou um registro no banco de dados
-    if ($result->num_rows > 0) {
-        $cliente = $result->fetch_assoc();
-    } else {
-        echo "<p>Cliente não encontrado.</p>";
-        exit();
-    }
-}
+    // Deleta o registro do cliente com ID específicado
+    $sql = "DELETE FROM clientes WHERE id='$id'";
 
-// Verifica se o formulário foi enviado para atualizar o cliente
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST['id'];
-    $nome = $_POST['nome'];
-    $email = $_POST['email'];
-
-    $sql = "UPDATE clientes SET nome='$nome', email='$email' WHERE id='$id'";
-
+    // Mensagem (Feedback Para usuário)
     if ($conn->query($sql) === TRUE) {
-        echo "<p>Cliente atualizado com sucesso!</p>";
+        echo "<p>Cliente excluído com sucesso!</p>";
     } else {
-        echo "<p>Erro ao atualizar cliente: " . $conn->error . "</p>";
+        echo "<p>Erro ao excluir cliente</p>";
     }
+
 }
+
+
+// Fecha a conexão
+$conn->close();
 ?>
-
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Cliente</title>
-</head>
-<body>
-    <form method="post" action="">
-        <input type="hidden" name="id" value="<?php echo $cliente['id'] ?? ''; ?>">
-
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" value="<?php echo isset($cliente['nome']) ? $cliente['nome'] : ''; ?>" required><br>
-
-        <label for="email">Email:</label>
-        <input type="email" name="email" value="<?php echo isset($cliente['email']) ? $cliente['email'] : ''; ?>" required><br>
-
-        <button type="submit">Atualizar</button>
-    </form>
-</body>
-</html>
-
